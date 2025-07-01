@@ -1,0 +1,140 @@
+1
+00:00:00,000 --> 00:00:04,000
+React, a JavaScript library for building user interfaces.
+
+2
+00:00:04,000 --> 00:00:08,359
+Developed at Facebook and released in 2013, it's safe to say React has been the most influential
+
+3
+00:00:08,359 --> 00:00:10,279
+UI library of recent memory.
+
+4
+00:00:10,279 --> 00:00:14,759
+We use it to build components that represent logical, reusable parts of the UI.
+
+5
+00:00:14,759 --> 00:00:18,719
+The beauty of React is that the simplicity of building a component has been brought down
+
+6
+00:00:18,719 --> 00:00:20,280
+to its theoretical minimum.
+
+7
+00:00:20,280 --> 00:00:22,080
+It's just a JavaScript function.
+
+8
+00:00:22,080 --> 00:00:24,320
+It's so easy, a caveman could do it.
+
+9
+00:00:24,320 --> 00:00:29,199
+The return value from this function is your HTML or UI, which is written in a special syntax
+
+10
+00:00:29,199 --> 00:00:33,719
+called JSX, allowing you to easily combine JavaScript with HTML markup.
+
+11
+00:00:33,719 --> 00:00:37,439
+If you want to pass data into a component, you simply pass at a props argument, which
+
+12
+00:00:37,439 --> 00:00:41,280
+you can then reference inside the function body or in the UI using braces.
+
+13
+00:00:41,280 --> 00:00:45,200
+If the value changes, React will react to update the UI.
+
+14
+00:00:45,200 --> 00:00:48,960
+If we want to give our component its own internal state, we can use the state hook.
+
+15
+00:00:48,960 --> 00:00:53,280
+The hook is just a function that returns a value as well as a function to change the
+
+16
+00:00:53,280 --> 00:00:54,280
+value.
+
+17
+00:00:54,280 --> 00:00:58,159
+In this case, count is our reactive state and set count will change the state.
+
+18
+00:00:58,159 --> 00:01:02,159
+When used in the template, the count will always show the library for building for building for building for building for user interfaces for user interfaces.
+
+19
+00:01:02,159 --> 00:01:14,159
+The reason you might want to use React is not the library itself, but the massive ecosystem that surrounds it.
+
+20
+00:01:14,159 --> 00:01:18,159
+React itself doesn't care about routing, state management, animation or anything like that.
+
+21
+00:01:18,159 --> 00:01:22,159
+Instead, it lets those concerns evolve naturally within the open source community.
+
+22
+00:01:22,159 --> 00:01:26,159
+No matter what you're trying to do, there's very likely a good supporting library to help you get it done.
+
+23
+00:01:26,159 --> 00:01:28,159
+Need a static site, you have Gatsby.
+
+24
+00:01:28,159 --> 00:01:30,159
+Need server-side rendering, you have Next.
+
+25
+00:01:30,159 --> 00:01:32,159
+For animation, you have Spring. For forms, you have Formic.
+
+26
+00:01:32,159 --> 00:01:36,159
+State management, you've got Redux, MobEx, Flux, Recoil, XState and more.
+
+27
+00:01:36,159 --> 00:01:40,159
+You have an endless supply of choices to get things done the way you like it.
+
+28
+00:01:40,159 --> 00:01:44,159
+As an added bonus, once you have React down, you can easily jump into React Native and start building mobile apps.
+
+29
+00:01:44,159 --> 00:01:48,159
+And it's no surprise that knowing this little UI library is one of the most
+
+30
+00:01:48,159 --> 00:01:50,159
+In-Dband skills for frontend developers today.
+
+31
+00:01:50,159 --> 00:01:52,159
+This has been React in 100 seconds.
+
+32
+00:01:52,159 --> 00:01:56,159
+If you want to see more short videos like this, make sure to like and subscribe.
+
+33
+00:01:56,159 --> 00:01:58,159
+And check out more advanced React content on FireShip.io.
+
+34
+00:01:58,159 --> 00:02:04,159
+And if you're curious how I make these videos, make sure to check out my new personal channel and video on that topic.
+
+35
+00:02:04,159 --> 00:02:06,159
+Thanks for watching and I will see you in the next one.
+

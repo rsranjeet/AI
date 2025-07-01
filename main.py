@@ -1,49 +1,70 @@
-import whisper
-import tkinter as tk
-from tkinter import filedialog, messagebox
+import uuid
 import os
+from flask import Flask, render_template, request, send_from_directory, jsonify
 from pathlib import Path
+import whisper
 
-# Load Whisper model once
-model = whisper.load_model("base")
+# Flask setup
+app = Flask(__name__)
+UPLOAD_FOLDER = "uploads"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# Function to transcribe selected file
-def transcribe_file():
-    file_path = filedialog.askopenfilename(
-        title="Select Audio/Video File",
-        filetypes=[("Media Files", "*.mp3 *.wav *.mp4 *.mkv *.mov *.flv *.aac *.m4a")]
-    )
-    if not file_path:
-        return
+# Load Whisper model
+model = whisper.load_model("base")  # or "tiny" for faster load
 
-    out_path = Path(file_path).with_suffix(".txt")
-    status_label.config(text=f"Transcribing: {os.path.basename(file_path)}")
+# Helper to format timestamps for .srt
+def format_timestamp(seconds: float) -> str:
+    hours = int(seconds // 3600)
+    minutes = int((seconds % 3600) // 60)
+    secs = int(seconds % 60)
+    millis = int((seconds - int(seconds)) * 1000)
+    return f"{hours:02}:{minutes:02}:{secs:02},{millis:03}"
 
-    try:
-        result = model.transcribe(file_path, fp16=False)
-        with open(out_path, "w", encoding="utf-8") as f:
-            f.write(result["text"])
-        messagebox.showinfo("Success", f"Transcription saved:\n{out_path}")
-        status_label.config(text="Done!")
-    except Exception as e:
-        messagebox.showerror("Error", f"Failed to transcribe:\n{str(e)}")
-        status_label.config(text="Error occurred.")
+# Core transcription logic
+def transcribe_to_srt_and_txt(file_path: Path):
+    result = model.transcribe(str(file_path), fp16=False)
 
-# Set up the GUI
-root = tk.Tk()
-root.title("Whisper Transcriber")
-root.geometry("400x200")
+    txt_path = file_path.with_suffix(".txt")
+    srt_path = file_path.with_suffix(".srt")
 
-frame = tk.Frame(root, padx=20, pady=20)
-frame.pack(expand=True)
+    # Save plain text
+    with open(txt_path, "w", encoding="utf-8") as f_txt:
+        f_txt.write(result["text"])
 
-label = tk.Label(frame, text="Select an audio/video file to transcribe", font=("Arial", 12))
-label.pack(pady=10)
+    # Save subtitles in .srt format
+    with open(srt_path, "w", encoding="utf-8") as f_srt:
+        for i, segment in enumerate(result["segments"], start=1):
+            start = format_timestamp(segment["start"])
+            end = format_timestamp(segment["end"])
+            text = segment["text"].strip()
+            f_srt.write(f"{i}\n{start} --> {end}\n{text}\n\n")
 
-transcribe_button = tk.Button(frame, text="Select File & Transcribe", command=transcribe_file, font=("Arial", 12), bg="#4CAF50", fg="white")
-transcribe_button.pack(pady=10)
+    return txt_path.name, srt_path.name
 
-status_label = tk.Label(frame, text="", font=("Arial", 10))
-status_label.pack()
+# Main route
+@app.route("/", methods=["GET", "POST"])
+def index():
+    if request.method == "POST":
+        file = request.files["file"]
+        if file:
+            filename = f"{uuid.uuid4().hex}_{file.filename}"
+            save_path = Path(UPLOAD_FOLDER) / filename
+            file.save(save_path)
 
-root.mainloop()
+            txt_file, srt_file = transcribe_to_srt_and_txt(save_path)
+
+            return jsonify({
+                "txt": txt_file,
+                "srt": srt_file
+            })
+
+    return render_template("index.html")
+
+# File download route
+@app.route("/download/<filename>")
+def download(filename):
+    return send_from_directory(UPLOAD_FOLDER, filename, as_attachment=True)
+
+# Run the server
+if __name__ == "__main__":
+    app.run(debug=True)

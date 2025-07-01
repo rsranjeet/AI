@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Whisper Web Transcriber</title>
+    <style>
+        body { font-family: Arial; margin: 40px; }
+        .container { max-width: 600px; margin: auto; text-align: center; }
+        .btn { padding: 10px 20px; background: #4CAF50; color: white; border: none; cursor: pointer; }
+        #progressBar {
+            width: 100%; background-color: #f3f3f3; margin-top: 10px; height: 20px;
+            border-radius: 5px; overflow: hidden;
+        }
+        #progressFill {
+            height: 100%; width: 0%; background-color: #4CAF50;
+            text-align: center; color: white; line-height: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Upload Audio/Video File for Transcription</h2>
+
+    <form id="uploadForm">
+        <input type="file" name="file" id="fileInput" accept="audio/*,video/*" required><br><br>
+        <button class="btn" type="submit">Transcribe</button>
+    </form>
+
+    <div id="progressBar" style="display:none;">
+        <div id="progressFill">0%</div>
+    </div>
+
+    <div id="resultLinks" style="display:none; margin-top: 20px;">
+        <h3>Download Results</h3>
+        <a id="txtLink" href="#" download>📄 Download TXT</a><br>
+        <a id="srtLink" href="#" download>🎬 Download SRT</a>
+    </div>
+</div>
+
+<script>
+document.getElementById("uploadForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const fileInput = document.getElementById("fileInput");
+    if (!fileInput.files.length) return;
+
+    const formData = new FormData();
+    formData.append("file", fileInput.files[0]);
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "/", true);
+
+    xhr.upload.onprogress = function(e) {
+        if (e.lengthComputable) {
+            const percent = Math.round((e.loaded / e.total) * 100);
+            document.getElementById("progressBar").style.display = "block";
+            document.getElementById("progressFill").style.width = percent + "%";
+            document.getElementById("progressFill").textContent = percent + "%";
+        }
+    };
+
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            const res = JSON.parse(xhr.responseText);
+
+            document.getElementById("txtLink").href = "/download/" + res.txt;
+            document.getElementById("srtLink").href = "/download/" + res.srt;
+            document.getElementById("resultLinks").style.display = "block";
+            document.getElementById("progressFill").textContent = "Upload complete";
+        } else {
+            alert("An error occurred during transcription.");
+        }
+    };
+
+    xhr.onerror = function() {
+        alert("Failed to connect to the server.");
+    };
+
+    xhr.send(formData);
+});
+</script>
+</body>
+</html>
